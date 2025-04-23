@@ -1,36 +1,63 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 struct Nodo {
-    int dato;
-    Nodo** hijos;  
-    int n;         
-   
-    Nodo(int valor, int numHijos) {
-        dato = valor;
-        n = numHijos;
-        hijos = new Nodo*[n];
+    string dato;
+    vector<Nodo*> hijos;
 
-        for (int i = 0; i < n; i++) {
-            hijos[i] = nullptr;
-        }
+    Nodo(string valor) {
+        dato = valor;
     }
 };
 
 int main() {
-    Nodo* raiz = new Nodo(10, 3);
+    int totalNodos;
+    cout << "¿Cuántos nodos quieres crear? ";
+    cin >> totalNodos;
 
-    raiz->hijos[0] = new Nodo(20, 0);
-    raiz->hijos[1] = new Nodo(30, 0);
-    raiz->hijos[2] = new Nodo(40, 0);
+    vector<Nodo*> nodos;
+    string valor;
 
-    cout << "Nodo raíz: " << raiz->dato << endl;
-    for (int i = 0; i < raiz->n; i++) {
-        if (raiz->hijos[i])
-            cout << "  Hijo " << i << ": " << raiz->hijos[i]->dato << endl;
+    // Crear nodos con datos
+    for (int i = 0; i < totalNodos; i++) {
+        cout << "Ingresa el valor del nodo " << i << ": ";
+        cin >> valor;
+        nodos.push_back(new Nodo(valor));
     }
 
-    delete raiz;
+    // Conexiones padre-hijo
+    for (int i = 0; i < totalNodos; i++) {
+        int numHijos;
+        cout << "¿Cuántos hijos tiene el nodo " << i << " (" << nodos[i]->dato << ")? ";
+        cin >> numHijos;
+
+        for (int j = 0; j < numHijos; j++) {
+            int indiceHijo;
+            cout << "  Ingresa el índice del hijo #" << j + 1 << ": ";
+            cin >> indiceHijo;
+
+            if (indiceHijo >= 0 && indiceHijo < totalNodos) {
+                nodos[i]->hijos.push_back(nodos[indiceHijo]);
+            } else {
+                cout << "  Índice inválido. Se omite este hijo." << endl;
+            }
+        }
+    }
+
+    // Mostrar árbol básico
+    for (int i = 0; i < totalNodos; i++) {
+        cout << "Nodo " << i << " (" << nodos[i]->dato << ") tiene " << nodos[i]->hijos.size() << " hijos: ";
+        for (Nodo* h : nodos[i]->hijos) {
+            cout << h->dato << " ";
+        }
+        cout << endl;
+    }
+
+    // Liberar memoria
+    for (Nodo* nodo : nodos) {
+        delete nodo;
+    }
 
     return 0;
 }
